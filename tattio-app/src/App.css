@@ -1,0 +1,89 @@
+:root {
+  --primary-color: rgb(37, 7, 77);
+  --secondary-color: rgb(102, 42, 181);
+  --accent-color: #efc552;
+  --text: #cdbbf0;
+  --sub-text: #6b5497;
+}
+
+body {
+background-color:var(--primary-color);;
+background-image:
+radial-gradient(at 40% 20%, rgb(69, 32, 101) 0px, transparent 50%),
+radial-gradient(at 80% 0%, rgb(62, 11, 113) 0px, transparent 50%),
+radial-gradient(at 0% 50%, rgb(62, 12, 82) 0px, transparent 50%),
+radial-gradient(at 80% 50%, rgb(38, 5, 79) 0px, transparent 50%),
+radial-gradient(at 0% 100%, rgb(90, 23, 124) 0px, transparent 50%),
+radial-gradient(at 80% 100%, rgb(82, 22, 104) 0px, transparent 50%),
+radial-gradient(at 0% 0%, rgb(65, 12, 90) 0px, transparent 50%);
+  position: relative;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+
+/*
+body::before {
+  content: "";
+  position: fixed;               stays in place while scrolling 
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('./Images/WebsiteBG2.png');
+  background-size: cover;        
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.15;                adjust for transparency 
+  z-index: -1;                 
+  pointer-events: none;         
+}
+
+/* Logo stays fixed on top */
+.logo-header {
+  position: static;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.logo {
+  width: 10vw;         /* 20% of viewport width */
+  height: auto;        /* maintain aspect ratio */
+  max-width: 300px;    /* prevent it from getting too big */
+  min-width: 180px;    /* prevent it from getting too small */
+  display: block;
+  padding:10px;
+}
+
+/* Center logo on mobile */
+@media (max-width: 768px) {
+  .logo-container {
+    justify-content: center;
+    max-height:100px
+  }
+}
+
+/* Center MainContainer */
+.content {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh; /* overall screen size */
+  box-sizing: border-box;
+}
+
+

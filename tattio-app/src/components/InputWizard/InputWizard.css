@@ -1,0 +1,211 @@
+/* Fade out animation for the next button on step 3 */
+.cta.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+h2 {
+  font-family: "Lexend Deca", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  letter-spacing: -1px;
+  color: var(--sub-text);
+  margin: 0px;
+  font-size: 1.5rem;
+}
+
+
+.step-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 90vh;
+  max-width: 1350px;
+}
+
+.main-container1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: top;
+  overflow-y: auto;
+  max-height: 100vh;
+  width: 80%;
+  max-width: 1100px;
+  background-color: var(--primary-color);;
+  border: 1px solid #fbc73845;
+  box-shadow: 0 10px 10px #00000037;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 20px;
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE and Edge */
+}
+
+.main-container1::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari, Opera */
+}
+
+.main-container-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  /* Add padding for better spacing */
+  padding-top: 5px;
+  margin-top: 10px;
+}
+
+
+/* Hide scrollbar (cross-browser) */
+.scroll-wrapper {
+  overflow-y: auto;
+  max-height: 80vh;
+  padding-bottom: 2rem;
+  padding-top: 1rem;
+
+
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+}
+
+.scroll-wrapper::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
+
+
+.step-title-container {
+  position:relative;
+  text-align: center;
+  background-color: var(--primary-color);
+}
+
+
+.step-title-text {
+  font-family: "Lexend Deca", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  letter-spacing: -1px;
+  color: var(--text);
+  margin: 0px;
+  font-size: 3rem;
+}
+
+.step-title-subtext {
+  font-size: 1.4rem;
+  color: var(--sub-text);
+  font-weight: 300;
+  margin-top: -10px;
+}
+
+
+
+
+
+/* Next Button */
+.cta {
+  margin: 3px auto 0 auto;
+  /* Top margin, auto left/right centers in flex column */
+  display: flex;
+  padding: 11px 33px;
+  text-decoration: none;
+  font-size: 25px;
+  color: var(--secondary-color);
+  background: var(--primary-color);
+  transition: 1s;
+  box-shadow: 6px 6px 0 black;
+  transform: skewX(-15deg);
+  border: none;
+  cursor: pointer;
+}
+
+.cta:focus {
+  outline: none;
+}
+
+.cta:hover {
+  transition: 0.5s;
+  box-shadow: 10px 10px 0 var(--accent-color);
+}
+
+.cta .second {
+  transition: 0.5s;
+  margin-right: 0px;
+}
+
+.cta:hover .second {
+  transition: 0.5s;
+  margin-right: 45px;
+}
+
+.span {
+  transform: skewX(15deg);
+}
+
+
+.second {
+  width: 20px;
+  margin-left: 30px;
+  position: relative;
+  top: 12%;
+}
+
+.left-arrow {
+  margin-left: 0;
+  width: 30px;
+  position: relative;
+  margin-top: 7px;
+  top: 12%;
+  display: flex;
+  align-items: center;
+}
+
+.back-txt {
+  margin-left: 40px;
+}
+
+.one {
+  transition: 0.4s;
+  transform: translateX(-60%);
+}
+
+.two {
+  transition: 0.5s;
+  transform: translateX(-30%);
+}
+
+.cta:hover .three {
+  animation: color_anim 1s infinite 0.2s;
+}
+
+.cta:hover .one {
+  transform: translateX(0%);
+  animation: color_anim 1s infinite 0.6s;
+}
+
+.cta:hover .two {
+  transform: translateX(0%);
+  animation: color_anim 1s infinite 0.4s;
+}
+
+@keyframes color_anim {
+  0% {
+    fill: var(--secondary-color)
+  }
+
+  50% {
+    fill: #fbc638;
+  }
+
+  100% {
+    fill: var(--secondary-color);
+  }
+}
