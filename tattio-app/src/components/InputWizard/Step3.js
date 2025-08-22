@@ -39,9 +39,13 @@ function Step3({ getTattooData, entryAnimation, animate }) {
     } catch (error) {
       console.error('Error:', error);
       if (error.message.includes('Failed to fetch')) {
-        alert('Connection failed. Please ensure the Flask backend is running on port 5000 (python main.py)');
+        const isLocalhost = !process.env.REACT_APP_API_URL || process.env.REACT_APP_API_URL.includes('localhost');
+        const message = isLocalhost
+          ? 'Connection failed. Please ensure the Flask backend is running on port 5000 (python main.py)'
+          : 'Connection failed. The server might be temporarily unavailable. Please try again in a few moments.';
+        alert(message);
       } else {
-        alert(`Error: ${error.message}. Please ensure the Flask backend is running on port 5000.`);
+        alert(`Error: ${error.message}`);
       }
     } finally {
       setLoading(false);
