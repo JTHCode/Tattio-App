@@ -3,7 +3,7 @@ services:
     name: tattio-backend
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: cd src && gunicorn scripts.main:app
+    startCommand: PYTHONPATH=$PYTHONPATH:. gunicorn src.scripts.main:app
     envVars:
       - key: FLASK_ENV
         value: production
