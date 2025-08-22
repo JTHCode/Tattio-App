@@ -6,14 +6,24 @@ import requests
 from dotenv import load_dotenv
 import replicate
 from pathlib import Path
-from prompt_creation import create_prompt
+# from prompt_creation import create_prompt
 
 load_dotenv()
 MODEL = "black-forest-labs/flux-schnell"
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://www.tattio.io", "https://tattio.io"]}})
 
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
+
+@app.route('/generate', methods=['POST', 'OPTIONS'])
+def generate():
+    if request.method == 'OPTIONS':
+        return '', 204
+    # Your existing generation logic will go here
+    return jsonify({"message": "Generation endpoint"}), 200
 
 
 ### Path setup for generated tattoos
