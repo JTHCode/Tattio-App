@@ -12,18 +12,69 @@ load_dotenv()
 MODEL = "black-forest-labs/flux-schnell"
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://www.tattio.io", "https://tattio.io"]}})
+# Configure CORS with additional settings
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000", "https://www.tattio.io", "https://tattio.io"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "expose_headers": ["Content-Type"],
+        "supports_credentials": False,
+        "max_age": 600
+    }
+})
+
+@app.route('/')
+def root():
+    return jsonify({"message": "Tattio Backend API"}), 200
 
 @app.route('/health')
 def health_check():
-    return jsonify({"status": "healthy"}), 200
+    try:
+        return jsonify({
+            "status": "healthy",
+            "timestamp": time.time(),
+            "version": "1.0"
+        }), 200
+    except Exception as e:
+        print(f"Error in health check: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/generate', methods=['POST', 'OPTIONS'])
 def generate():
     if request.method == 'OPTIONS':
-        return '', 204
-    # Your existing generation logic will go here
-    return jsonify({"message": "Generation endpoint"}), 200
+        # Handle preflight request
+        response = jsonify({'message': 'OK'})
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        return response, 204
+    
+    try:
+        # Log the incoming request
+        print("Received generate request")
+        print(f"Request headers: {dict(request.headers)}")
+        print(f"Request data: {request.get_json()}")
+        
+        # Your existing generation logic will go here
+        return jsonify({
+            "success": True,
+            "message": "Generation endpoint",
+            "imageUrl": "placeholder_url",
+            "downloadUrl": "placeholder_url"
+        }), 200
+    except Exception as e:
+        print(f"Error in generate endpoint: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+@app.after_request
+def after_request(response):
+    # Log the response
+    print(f"Response status: {response.status}")
+    print(f"Response headers: {dict(response.headers)}")
+    return response
 
 
 ### Path setup for generated tattoos
@@ -59,8 +110,10 @@ def bodypart_to_ratio(body_part: str) -> str:
         return "4:3"
     else:
         return "1:1"
-      
 
+if __name__ == '__main__':
+    # For local development
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
 
 @app.route("/images/<path:filename>", methods=["GET"])
 def get_image(filename):
@@ -78,7 +131,8 @@ def download_image(filename):
     return send_from_directory(str(GEN_DIR), png_filename, as_attachment=True)
 
 
-@app.route('/', methods=['POST'])
+# Main generation endpoint
+@app.route('/generate', methods=['POST'])
 def generate_tattoo():
     if not os.getenv("REPLICATE_API_TOKEN"):
       return jsonify({"success": False, "error": "Missing REPLICATE_API_TOKEN"}), 500
