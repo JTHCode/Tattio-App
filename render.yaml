@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: tattio-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn src.scripts.main:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_APP
+        value: src.scripts.main:app
+      - key: CORS_ORIGIN
+        value: https://tattio.io
