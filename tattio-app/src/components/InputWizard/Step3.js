@@ -14,6 +14,7 @@ function Step3({ getTattooData, entryAnimation, animate }) {
       // console.log('Data to be sent to backend:', tattooData);
 
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      console.log('Attempting to connect to:', apiUrl + '/generate');
       const response = await fetch(apiUrl + '/generate', {
         method: 'POST',
         headers: {
@@ -38,11 +39,14 @@ function Step3({ getTattooData, entryAnimation, animate }) {
       }
     } catch (error) {
       console.error('Error:', error);
+      console.error('Full error details:', error);
+      console.log('Current API URL:', process.env.REACT_APP_API_URL);
+      
       if (error.message.includes('Failed to fetch')) {
         const isLocalhost = !process.env.REACT_APP_API_URL || process.env.REACT_APP_API_URL.includes('localhost');
         const message = isLocalhost
           ? 'Connection failed. Please ensure the Flask backend is running on port 5000 (python main.py)'
-          : 'Connection failed. The server might be temporarily unavailable. Please try again in a few moments.';
+          : `Connection failed. Could not connect to ${process.env.REACT_APP_API_URL}. Please try again in a few moments.`;
         alert(message);
       } else {
         alert(`Error: ${error.message}`);
