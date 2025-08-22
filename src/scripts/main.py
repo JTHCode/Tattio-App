@@ -12,7 +12,7 @@ load_dotenv()
 MODEL = "black-forest-labs/flux-schnell"
 
 app = Flask(__name__)
-CORS(app)  # We'll use environment variable for origins
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://tattio.io", "https://www.tattio.io"]}})
 
 ### Path setup for generated tattoos
 THIS_FILE = Path(__file__).resolve()
