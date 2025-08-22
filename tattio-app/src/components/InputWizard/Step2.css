@@ -9,7 +9,20 @@
   gap: 30px;
 }
 
+.left-side-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: 90%;
+  min-width:25vh;
+  max-width: 36%;
+  height: 80vh;
+}
+
 .body-picker {
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,12 +31,12 @@
   box-shadow:inset 0 8px 8px #00000018;
   background-color: rgb(36, 7, 72);
   border: 1px solid #fbc73814;
-  padding:15px;
-  width: 30%;
-  max-height: 80%;
-  min-width: 20vh;
+  border-radius: 10px;
+  padding: 10px;
+  width: 90%;
+  height: 90%;
   background-color: rgb(31, 6, 64);
-  transition:0.2s;
+  transition:0.3s;
 }
 
 .body-picker:hover {
@@ -69,9 +82,9 @@ path {
 }
 
 .options-row {
-  max-height: 33%;
+  max-height: 36%;
   min-height: fit-content;
-  padding-bottom: 20px;
+  padding-bottom: 15px;
 }
 
 .prompt-input {
@@ -346,4 +359,39 @@ button {
     min-width: 0;
     width: 100%;
   }
+}
+
+.required {
+  color: #de2e63a7;
+  margin-left: 2px;
+  font-size: 1.1rem;
+  vertical-align: super;  /* This moves the asterisk up */
+  position: relative;
+}
+
+.step-navigation {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.next-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.next-button:hover {
+  background-color: #45a049;
+}
+
+.prompt-input:invalid,
+.size-boxes:invalid {
+  border-color: #ff4444;
 }

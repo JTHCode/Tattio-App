@@ -26,7 +26,7 @@ const styles = [
 ];
 
 
-function Step1({ onNext, selectedStyles, onStyleChange }) {
+function Step1({ onNext, selectedStyles, onStyleChange, animate }) {
   const [limitReached, setLimitReached] = useState(false);
 
   const toggleStyle = (styleId) => {
@@ -44,31 +44,31 @@ function Step1({ onNext, selectedStyles, onStyleChange }) {
   };
 
   return (
-    <div className="main-container1">
-      <div className="step-title-container">
-        <p className="step-title-text">The Style</p>
-        <p className='step-title-text step-title-subtext'>Choose up to 3</p>
-      </div>
-      <div className="scroll-wrapper px-3">
-        <div className="row gx-3 justify-content-center">
-          {styles.map(style => (
-            <div className="col-6 col-sm-4 col-md-3 mb-0" key={style.id}>
-              <button
-                className={`style-button ${selectedStyles.includes(style.id) ? 'selected' : ''}${limitReached ? 'limit-reached' : ''}`}
-                id={style.id}
-                onClick={() => toggleStyle(style.id)}
-              >
-                <img
-                  src={style.src}
-                  alt={style.alt}
-                  className="img-fluid"
-                />
-              </button>
-            </div>
-          ))}
+    <div className={`main-container1 ${animate ? 'fade-slide-out' : ''}`}>
+        <div className="step-title-container">
+          <p className="step-title-text">The Style</p>
+          <p className='step-title-text step-title-subtext'>Choose up to 3</p>
+        </div>
+        <div className="scroll-wrapper px-3">
+          <div className="row gx-3 justify-content-center style-button-container">
+            {styles.map(style => (
+              <div className="col-6 col-sm-4 col-md-3 mb-0" key={style.id}>
+                <button
+                  className={`style-button ${selectedStyles.includes(style.id) ? 'selected' : ''}${limitReached ? 'limit-reached' : ''}`}
+                  id={style.id}
+                  onClick={() => toggleStyle(style.id)}
+                >
+                  <img
+                    src={style.src}
+                    alt={style.alt}
+                    className="img-fluid"
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
   );
 }
 

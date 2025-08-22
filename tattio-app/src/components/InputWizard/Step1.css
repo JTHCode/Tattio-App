@@ -1,25 +1,25 @@
-.button-container {
+.style-button-container {
   display: flex;
   flex-wrap: wrap;          /* allows buttons to wrap to next line */
   justify-content: center;  /* centers buttons horizontally */
   align-items: center;      /* centers buttons vertically */
   padding: 10px;            /* padding around the button container */
-  margin:5px;
 }
 
 .style-button {
-  width: 100%;             /* desired fixed width */
+  width: 90%;             /* desired fixed width */
   max-width: 100%; 
   aspect-ratio: 5/4;  /* Keeps button shape */
   padding: 0;
-  margin: 5px;
+  margin: 10px;
+  margin-bottom: 15px;
   border: none;
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;         /* hide image overflow */
-  border-radius: 20px;      /* optional: rounded corners */
+  border-radius: 15px;      /* optional: rounded corners */
   transition: all 0.2s ease-in-out;
 }
 
@@ -28,6 +28,11 @@
   height: 100%;
   object-fit: fill;        /* crops image to fill button area */
   display: block;
+}
+
+.style-button:hover {
+  box-shadow: 0 0 0.7rem #fbc638;
+  transform: scale(1.05);
 }
 
 .style-button.selected {

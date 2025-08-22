@@ -5,26 +5,170 @@ import Step1 from './Step1';
 import Step2 from './Step2';
 import Step3 from './Step3';
 
+// Import styles array
+const styles = [
+  { id: "abstract", src: "/Images/style_buttons/abstract.png", alt: "Abstract" },
+  { id: "amertrad", src: "/Images/style_buttons/amertrad.png", alt: "American Traditional" },
+  { id: "anime", src: "/Images/style_buttons/anime.png", alt: "Anime" },
+  { id: "biomech", src: "/Images/style_buttons/biomech.png", alt: "Biomechanical" },
+  { id: "blackwork", src: "/Images/style_buttons/blackwork.png", alt: "Blackwork" },
+  { id: "fineline", src: "/Images/style_buttons/fineline.png", alt: "Fine Line" },
+  { id: "holo", src: "/Images/style_buttons/holo.png", alt: "Holographic" },
+  { id: "letter", src: "/Images/style_buttons/letter.png", alt: "Lettering" },
+  { id: "minimal", src: "/Images/style_buttons/minimal.png", alt: "Minimalist" },
+  { id: "neg", src: "/Images/style_buttons/neg.png", alt: "Negative Space" },
+  { id: "newschool", src: "/Images/style_buttons/newschool.png", alt: "New School" },
+  { id: "psych", src: "/Images/style_buttons/psych.png", alt: "Psychedelic" },
+  { id: "realism", src: "/Images/style_buttons/realism.png", alt: "Realism" },
+  { id: "sketch", src: "/Images/style_buttons/sketch.png", alt: "Sketch" },
+  { id: "surr", src: "/Images/style_buttons/surr.png", alt: "Surrealism" },
+  { id: "trad", src: "/Images/style_buttons/trad.png", alt: "Traditional" },
+  { id: "trashpolka", src: "/Images/style_buttons/trashpolka.png", alt: "Trash Polka" },
+  { id: "tribal", src: "/Images/style_buttons/tribal.png", alt: "Tribal" },
+  { id: "watercolor", src: "/Images/style_buttons/watercolor.png", alt: "Watercolor" },
+  { id: "jap", src: "/Images/style_buttons/jap.png", alt: "Japanese" }
+];
+
 function MainContainer() {
   const [step, setStep] = useState(1);
+  const [entryAnimation, setEntryAnimation] = useState(false);
+  const [animateStep, setAnimateStep] = useState(false);
   const [selectedStyles, setSelectedStyles] = useState([]);
+  const [styleWeights, setStyleWeights] = useState({});
+  const [promptInput, setPromptInput] = useState("");
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedBodyPart, setSelectedBodyPart] = useState(null);
+  const [sliderValues, setSliderValues] = useState({
+    complexity: false,
+    contrast: false,
+    shading: false,
+    lineThickness: false,
+    colorComplexity: false,
+    colorRange: false
+  });
+  const [isColorEnabled, setIsColorEnabled] = useState(false);
 
-  const next = () => setStep((prev) => prev + 1);
+  const validateStep2 = () => {
+    if (step === 2) {
+      if (!promptInput || promptInput.trim() === '') {
+        alert('Please describe your tattoo');
+        return false;
+      }
+      if (!selectedBodyPart) {
+        alert('Please select a body part for your tattoo');
+        return false;
+      }
+      if (!selectedSize) {
+        alert('Please select a size for your tattoo');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const next = () => {
+    if (validateStep2()) {
+      setAnimateStep(true); // trigger animation
+      setTimeout(() => {
+        setStep(prev => prev + 1);
+        setAnimateStep(false);
+        setEntryAnimation(true); // animate the new step in
+
+        setTimeout(() => {
+          setEntryAnimation(false); // reset so future steps can re-animate
+        }, 400); // match fadeSlideIn duration
+      }, 400); // match fadeSlideOut duration
+    }
+  };
   const prev = () => setStep((prev) => prev - 1);
 
-  // Handler to update selected styles from Step1
+  // Handlers for all state updates
   const handleStyleChange = (styles) => setSelectedStyles(styles);
+  const handleWeightChange = (weights) => setStyleWeights(weights);
+  const handlePromptChange = (prompt) => setPromptInput(prompt);
+  const handleSizeChange = (size) => setSelectedSize(size);
+  const handleBodyPartChange = (part) => setSelectedBodyPart(part);
+  const handleSliderChange = (values) => setSliderValues(values);
+  const handleColorToggle = (isEnabled) => setIsColorEnabled(isEnabled);
+
+  // Prepare data for backend
+  const getTattooData = () => {
+    return {
+      styles: selectedStyles.map(style => {
+        if (typeof style === 'object') {
+          return {
+            ...style,
+            weight: styleWeights[style.id] || 50
+          };
+        }
+        const styleObj = styles.find(s => s.id === style);
+        return {
+          ...styleObj,
+          weight: styleWeights[style] || 50
+        };
+      }),
+      prompt: promptInput,
+      size: selectedSize,
+      bodyPart: selectedBodyPart,
+      parameters: {
+        complexity: sliderValues.complexity,
+        contrast: sliderValues.contrast,
+        shading: sliderValues.shading,
+        lineThickness: sliderValues.lineThickness,
+        colorComplexity: sliderValues.colorComplexity,
+        colorRange: sliderValues.colorRange
+      },
+      isColorEnabled: isColorEnabled
+    };
+  };
 
   return (
     <div className="main-container-wrapper">
       <div className="step-container">
-        {step === 1 && <Step1 onNext={next} selectedStyles={selectedStyles} onStyleChange={handleStyleChange} />}
-        {step === 2 && <Step2 onNext={next} onBack={prev} />}
-        {step === 3 && <Step3 onBack={prev} />}
-        <div className="button-container" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        {step === 1 && (
+          <Step1
+            onNext={next}
+            animate={animateStep}
+            selectedStyles={selectedStyles}
+            onStyleChange={handleStyleChange}
+          />
+        )}
+        {step === 2 && (
+          <Step2
+            onNext={next}
+            onBack={prev}
+            entryAnimation={entryAnimation}
+            animate={animateStep}
+            selectedStyles={selectedStyles}
+            onWeightChange={handleWeightChange}
+            onPromptChange={handlePromptChange}
+            onSizeChange={handleSizeChange}
+            onBodyPartChange={handleBodyPartChange}
+            onSliderChange={handleSliderChange}
+            onColorToggle={handleColorToggle}
+            promptInput={promptInput}
+            selectedSize={selectedSize}
+            selectedBodyPart={selectedBodyPart}
+            sliderValues={sliderValues}
+            isColorEnabled={isColorEnabled}
+          />
+        )}
+        {step === 3 && (
+          <Step3
+            onBack={prev}
+            entryAnimation={entryAnimation}
+            animate={animateStep}
+            getTattooData={getTattooData}
+          />
+        )}
+        <div className="button-container" style={{
+          display: step === 3 ? 'none' : 'flex',
+          gap: '1rem',
+          alignItems: 'center'
+        }}>
           {(step === 2 || step === 3) && (
             <button
-              className={`cta${step === 3 ? ' fade-out' : ''}`}
+              className="cta"
               onClick={prev}
             >
               <span className="second left-arrow">
@@ -65,15 +209,23 @@ function MainContainer() {
             </button>
           )}
           <button
-            className={`cta${step === 3 ? ' fade-out' : ''}`}
+            className="cta"
             onClick={next}
-            disabled={(step === 1 && selectedStyles.length === 0) || step === 3}
-            style={{ pointerEvents: (step === 1 && selectedStyles.length === 0) || step === 3 ? 'none' : 'auto' }}
+            disabled={
+              (step === 1 && selectedStyles.length === 0) ||
+              (step === 2 && (!promptInput?.trim() || !selectedBodyPart || !selectedSize))
+            }
+            style={{
+              pointerEvents: (
+                (step === 1 && selectedStyles.length === 0) ||
+                (step === 2 && (!promptInput?.trim() || !selectedBodyPart || !selectedSize))
+              ) ? 'none' : 'auto'
+            }}
           >
             <span className="span">NEXT</span>
             <span className="second">
               <svg
-                width="100px"
+                width="3rem"
                 height="20px"
                 viewBox="0 0 66 43"
                 version="1.1"

@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "tattio-app/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/tattio-app/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/tattio-app/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/tattio-app/manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/tattio-app/index.html"
+    }
+  ]
+}

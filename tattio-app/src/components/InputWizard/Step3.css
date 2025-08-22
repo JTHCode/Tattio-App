@@ -1,24 +1,37 @@
 /* Step3.css */
 
-/* ...existing code... */
+.main-container1 {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.step3-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2rem;
+}
+
 .result-image-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 350px;
   width: 100%;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .generated-tattoo-image {
-  max-width: 90vw;
-  max-height: 60vh;
+  max-width: 80vw;
+  max-height: 50vh;
   border-radius: 24px;
   border: 2px solid var(--accent-color);
   box-shadow: 0 4px 32px 0 rgba(37,7,77,0.25);
   background: var(--primary-color);
   object-fit: contain;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.4s;
 }
 
 .placeholder-image {
@@ -33,7 +46,7 @@
   color: var(--sub-text);
   font-size: 1.2rem;
   border: 1px solid var(--accent-color);
-  box-shadow: 0 2px 16px 0 rgba(37,7,77,0.15);
+  box-shadow: 0 10px 10px 0 rgba(18, 2, 39, 0.852);
 }
 
 .step3-content {
@@ -50,20 +63,89 @@
 }
 
 @media (max-width: 600px) {
-  .result-image-container, .placeholder-image {
+  .result-image-container {
     min-height: 180px;
     width: 100%;
     height: 180px;
+    padding: 0 10px;  /* Add padding on the sides */
+  }
+  .placeholder-image {
+    min-height: 180px;
+    width: 100%;
+    height: 180px;
+    max-width: calc(100% - 32px);  /* Account for container padding */
   }
   .generated-tattoo-image {
-    max-width: 98vw;
+    max-width: calc(100% - 32px);  /* Account for container padding */
     max-height: 40vh;
+    width: auto;  /* Allow image to maintain aspect ratio */
+  }
+  .main-container1 {
+    padding: 0 8px;  /* Add some breathing room to the main container */
   }
 }
-/* ...existing code... */
+
+
+/* Loading animation */
+.loader {
+  width: 90px;
+  height: 14px;
+  --c:#fbc638 92%,#0000;
+  background: 
+    radial-gradient(circle closest-side,var(--c)) calc(100%/-4) 0,
+    radial-gradient(circle closest-side,var(--c)) calc(100%/4)  0;
+  background-size:calc(100%/2) 100%;
+  animation: l14 1.5s infinite;
+}
+@keyframes l14 {
+    0%   {background-position: calc(100%/-4) 0    ,calc(100%/4) 0}
+    50%  {background-position: calc(100%/-4) -14px,calc(100%/4) 14px}
+    100% {background-position: calc(100%/4)  -14px,calc(3*100%/4) 14px}
+}
+
+
+/* Final buttons and download icon styles */
+.fin_buttons-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Download icone style and animation */
+.download-icon {
+  display: inline-block;
+  padding: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* Animate when the whole icon is hovered */
+.download-icon:hover .dl-arrow {
+  transform: translate(0px, 3px) scaleY(.95);
+  fill: #a57d0d;
+  stroke: #a57d0d;
+}
+
+.download-icon:hover .dl-base {
+  transform: translate(0px, 1px) scaleX(1.15);
+  fill: #a57d0d;
+  stroke: #a57d0d;
+}
+
+.dl-arrow,
+.dl-base {
+  transition: transform 0.2s ease, fill 0.3s, filter 0.3s ease;
+  transform-box: fill-box;    
+  transform-origin: center;  
+}
 
 .fin-buttons {
-  min-width: 130px;
+  min-width: 170px;
   height: 40px;
   color: #fff;
   padding: 5px 10px;
@@ -78,15 +160,24 @@
   border-radius: 5px;
   border: none;
   background: var(--accent-color);
-  box-shadow: 0 5px #6f6015;
 }
-.fin-buttons:hover {
+.submit-bttn:hover {
   box-shadow: 0 3px #af9617;
   top: 1px;
 }
+
+.strt-over-bttn:hover {
+  box-shadow: 0 3px rgb(60, 4, 132);
+  top: 1px;
+}
+
 .fin-buttons:active {
   box-shadow: 0 0 #bba017;
   top: 5px;
+}
+
+.submit-bttn {
+  box-shadow: 0 5px #6f6015;
 }
 
 .sbmt-text {
@@ -96,15 +187,16 @@
   letter-spacing: 0.5px;
 }
 
-.fin_buttons-container {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  width: 100%;
-  justify-content: center;
-}
-
 .strt-over-bttn {
   background: var(--secondary-color);
   color: var(--primary-color);
+  box-shadow: 0 5px rgb(17, 3, 35);
+}
+
+
+@media (max-width: 600px) {
+  .fin_buttons-container {
+    flex-direction: column;
+    gap: 10px;
+  }
 }

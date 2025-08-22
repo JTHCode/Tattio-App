@@ -11,9 +11,7 @@ Color Pallet:
 
 
 ### To Do Ideas:
--Style color button better
--Change bg color of style button container
--Create transition animation between steps
+-Loading animation for generated photo
 -Create on page load animation
 -Create 'start' page
 -Create info icons

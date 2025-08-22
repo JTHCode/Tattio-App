@@ -1,0 +1,81 @@
+/* Container fills viewport so we can fade it out without layout shifts */
+.landing-wrap {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  align-content: center;
+
+  /* Fade-in / out via opacity + slight translate */
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 2s ease,
+    transform 2s ease;
+}
+
+.landing-wrap.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-wrap.is-hiding {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+
+
+/* Assets */
+.landing-logo {
+  margin-top: 5vw;
+  width: clamp(340px, 55vw, 660px);
+  height: auto;
+  user-select: none;
+}
+
+.landing-howto {
+  width: clamp(300px, 50vw, 350px);
+  max-width: 90vw;
+  height: auto;
+  border-radius: 14px;
+}
+
+/* Button */
+.landing-button {
+  padding: 12px 22px;
+  font-family: "Lexend Deca", sans-serif;
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: rgb(37, 7, 77);
+  background: var(--accent-color);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 160ms ease;
+}
+
+.landing-button:hover {
+  transform: translateY(-3px);
+  background: #d9ad32;
+}
+
+.landing-button:active {
+  transform: translateY(0);
+}
+
+/* Focus visibility */
+.landing-button:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .landing-wrap,
+  .landing-button {
+    transition: none !important;
+    transform: none !important;
+  }
+}

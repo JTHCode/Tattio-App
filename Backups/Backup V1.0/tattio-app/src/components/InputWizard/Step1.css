@@ -1,0 +1,50 @@
+.button-container {
+  display: flex;
+  flex-wrap: wrap;          /* allows buttons to wrap to next line */
+  justify-content: center;  /* centers buttons horizontally */
+  align-items: center;      /* centers buttons vertically */
+  padding: 10px;            /* padding around the button container */
+  margin:5px;
+}
+
+.style-button {
+  width: 100%;             /* desired fixed width */
+  max-width: 100%; 
+  aspect-ratio: 5/4;  /* Keeps button shape */
+  padding: 0;
+  margin: 5px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;         /* hide image overflow */
+  border-radius: 20px;      /* optional: rounded corners */
+  transition: all 0.2s ease-in-out;
+}
+
+.style-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;        /* crops image to fill button area */
+  display: block;
+}
+
+.style-button.selected {
+  border: 2px solid #fbc638;
+  box-shadow: 0 0 15px #14032398;
+  transform: scale(1.12);
+  transition: all 0.2s ease-in-out;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.style-button.limit-reached {
+  animation: shake 0.3s ease-in-out;
+}

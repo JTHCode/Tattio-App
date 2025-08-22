@@ -1,0 +1,88 @@
+.slider-root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 20px;
+  margin-top: 5px;
+}
+
+.slider-track {
+  background-color: var(--secondary-color);
+  position: relative;
+  flex-grow: 1;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.slider-range {
+  position: absolute;
+  background-color: var(--accent-color);
+  height: 100%;
+  border-radius: 2px;
+}
+
+.slider-thumb {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border: 2px solid var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.weight-text {
+  color: var(--secondary-color);
+  font-size: .9rem;
+  font-family: "Lexend Deca", sans-serif;
+  text-align: center;
+}
+
+.slider-group label {
+  display: block;
+  font-family: 'Lexend', sans-serif; /* or any font you use */
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e9b8ff;  /* Light purple like your theme */
+  margin-bottom: 6px;
+}
+
+.slider-group {
+  margin-bottom: 1.5rem;
+}
+
+.slider-label-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 6px;
+}
+
+.slider-label {
+  font-family: 'Lexend', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e9b8ff;
+}
+
+.checkbox-root {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #e9b8ff;
+  border-radius: 4px;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox-indicator {
+  color: #e9b8ff;
+}
+
+.slider-wrapper.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}

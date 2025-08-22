@@ -1,0 +1,25 @@
+{
+  "name": "tattio-app",
+  "version": "1.0.0",
+  "description": "Color Pallet:     60:rgb(37, 7, 77)     30:rgb(102, 42, 181);     10: #fbc638     Main Text: #A786E4     Sub Text: #6b5497",
+  "main": "index.js",
+  "scripts": {
+    "test": "react-scripts test",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.1",
+    "@mui/material": "^7.3.1",
+    "gsap": "^3.13.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "^5.0.1"
+  }
+}

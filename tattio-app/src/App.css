@@ -59,7 +59,7 @@ body::before {
 }
 
 .logo {
-  width: 10vw;         /* 20% of viewport width */
+  width: 15vw;         /* 20% of viewport width */
   height: auto;        /* maintain aspect ratio */
   max-width: 300px;    /* prevent it from getting too big */
   min-width: 180px;    /* prevent it from getting too small */
@@ -86,4 +86,22 @@ body::before {
   box-sizing: border-box;
 }
 
+
+
+/* Hide scrollbars but still allow scrolling */
+
+/* Works for Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Works for Firefox */
+html {
+  scrollbar-width: none;   /* hide scrollbar, allow scroll */
+}
+
+/* Works for IE/old Edge */
+body {
+  -ms-overflow-style: none;
+}
 
