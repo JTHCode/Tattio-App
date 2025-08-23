@@ -25,21 +25,12 @@ CORS(app, resources={r"/*": {"origins": origins, "methods": ["GET", "POST", "OPT
 # Ensure correct scheme/host behind Render's proxy
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-@app.route('/')
-def root():
-    return jsonify({"message": "Tattio Backend API"}), 200
 
+# Health check endpoint for both / and /health
+@app.route('/')
 @app.route('/health')
 def health_check():
-    try:
-        return jsonify({
-            "status": "healthy",
-            "timestamp": time.time(),
-            "version": "1.0"
-        }), 200
-    except Exception as e:
-        print(f"Error in health check: {str(e)}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+    return jsonify({"status": "healthy"}), 200
 
 
 # Unified /generate endpoint with preflight and absolute URLs
