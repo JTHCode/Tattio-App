@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify, send_from_directory, url_for, abort
 from flask_cors import CORS
 import os, pathlib, time
@@ -15,13 +14,23 @@ MODEL = "black-forest-labs/flux-schnell"
 
 app = Flask(__name__)
 # CORS allowlist for both domains and localhost
-cors_origins = os.environ.get("CORS_ORIGIN")
-if cors_origins:
-    origins = [o.strip() for o in cors_origins.split(",") if o.strip()]
+cors_env = os.environ.get("CORS_ORIGINS") or os.environ.get("CORS_ORIGIN")
+if cors_env:
+    origins = [o.strip().rstrip('/') for o in cors_env.split(',') if o.strip()]
 else:
     origins = ["http://localhost:3000", "https://www.tattio.io", "https://tattio.io"]
-CORS(app, resources={r"/*": {"origins": origins, "methods": ["GET", "POST", "OPTIONS"], "supports_credentials": False}})
 
+CORS(
+    app,
+    resources={r"/*": {
+        "origins": origins,
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "expose_headers": ["Content-Type"],
+        "supports_credentials": False,
+        "max_age": 600,
+    }}
+)
 # Ensure correct scheme/host behind Render's proxy
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
@@ -180,19 +189,3 @@ def download_image(filename):
         abort(404)
     return send_from_directory(str(GEN_DIR), png_filename, as_attachment=True)
 
-
-
-if __name__ == "__main__":
-    try:
-        print("Starting Flask server...")
-        print("Checking required packages...")
-        print("All required packages found")
-        # Expose on 0.0.0.0 if testing from another device on LAN
-        app.run(host="127.0.0.1", port=5000, debug=True)
-    except ImportError as e:
-        print(f"Error: Missing required package - {str(e)}")
-        print("Please run: pip install flask flask-cors python-dotenv replicate")
-        input("Press Enter to exit...")
-    except Exception as e:
-        print(f"Error starting server: {str(e)}")
-        input("Press Enter to exit...")

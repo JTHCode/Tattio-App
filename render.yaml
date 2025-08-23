@@ -3,7 +3,7 @@ services:
     name: tattio-backend
     runtime: python
     buildCommand: pip install -r requirements.txt
-  startCommand: PYTHONPATH=$PYTHONPATH:. gunicorn -w 2 -k gthread -t 180 -b 0.0.0.0:$PORT src.scripts.main:app
+    startCommand: PYTHONPATH=$PYTHONPATH:. gunicorn -w 2 -k gthread -t 180 -b 0.0.0.0:$PORT src.scripts.main:app
     envVars:
       - key: FLASK_ENV
         value: production
@@ -11,3 +11,5 @@ services:
         value: src.scripts.main:app
       - key: CORS_ORIGIN
         value: https://tattio.io,https://www.tattio.io
+    # Optional but recommended:
+    healthCheckPath: /health
