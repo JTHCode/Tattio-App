@@ -31,6 +31,7 @@ CORS(
         "max_age": 600,
     }}
 )
+print("CORS origins in use:", origins, flush=True)
 # Ensure correct scheme/host behind Render's proxy
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
