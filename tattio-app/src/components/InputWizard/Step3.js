@@ -13,9 +13,9 @@ function Step3({ getTattooData, entryAnimation, animate }) {
       const tattooData = getTattooData();
       // console.log('Data to be sent to backend:', tattooData);
 
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      console.log('Attempting to connect to:', apiUrl + '/generate');
-      const response = await fetch(apiUrl + '/generate', {
+      const apiUrl = (process.env.REACT_APP_API_URL ?? 'http://localhost:5000').replace(/\/+$/, '');
+      console.log('Attempting to connect to:', `${apiUrl}/generate`);
+      const response = await fetch(`${apiUrl}/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify, send_from_directory, url_for, abort
 from flask_cors import CORS
 import os, pathlib, time
@@ -6,23 +7,23 @@ import requests
 from dotenv import load_dotenv
 import replicate
 from pathlib import Path
-# from prompt_creation import create_prompt
+from werkzeug.middleware.proxy_fix import ProxyFix
+from urllib.parse import urljoin
 
 load_dotenv()
 MODEL = "black-forest-labs/flux-schnell"
 
 app = Flask(__name__)
-# Configure CORS with additional settings
-CORS(app, resources={
-    r"/*": {
-        "origins": ["http://localhost:3000", "https://www.tattio.io", "https://tattio.io"],
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"],
-        "expose_headers": ["Content-Type"],
-        "supports_credentials": False,
-        "max_age": 600
-    }
-})
+# CORS allowlist for both domains and localhost
+cors_origins = os.environ.get("CORS_ORIGIN")
+if cors_origins:
+    origins = [o.strip() for o in cors_origins.split(",") if o.strip()]
+else:
+    origins = ["http://localhost:3000", "https://www.tattio.io", "https://tattio.io"]
+CORS(app, resources={r"/*": {"origins": origins, "methods": ["GET", "POST", "OPTIONS"], "supports_credentials": False}})
+
+# Ensure correct scheme/host behind Render's proxy
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 @app.route('/')
 def root():
@@ -40,33 +41,91 @@ def health_check():
         print(f"Error in health check: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
+# Unified /generate endpoint with preflight and absolute URLs
 @app.route('/generate', methods=['POST', 'OPTIONS'])
-def generate():
+def generate_tattoo():
     if request.method == 'OPTIONS':
-        # Handle preflight request
-        response = jsonify({'message': 'OK'})
-        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-        return response, 204
-    
+        return ('', 204)
+
+    if not os.getenv("REPLICATE_API_TOKEN"):
+        return jsonify({"success": False, "error": "Missing REPLICATE_API_TOKEN"}), 500
+
+    data = request.get_json(force=True) or {}
+    # ...existing logic...
+    styles = data.get('styles', {})
+    print(f'STYLES: {styles}')
+    prompt = data.get('prompt', '')
+    size = data.get('size', 'M')
+    body_part = data.get('bodyPart', 'forearm')
+    advanced_options = data.get('parameters', {})
+    color = data.get("isColorEnabled", False)
+
+    # formatted_prompt = create_prompt(styles, prompt, size, body_part, advanced_options, color)
+    formatted_prompt = "Create a tattoo design that combines the following styles and criteria:\n" + str(data)
+    print(f'Formatted Prompt: {formatted_prompt}')
+
+    payload = {
+        "prompt": formatted_prompt,
+        "aspect_ratio": bodypart_to_ratio(body_part),
+        "megapixels": '1',
+        "num_inference_steps": 4,
+        "num_outputs": 1,
+        "seed": 1121,
+        "go_fast": False,
+        "output_format": "webp",
+        "output_quality": 90,
+    }
+
     try:
-        # Log the incoming request
-        print("Received generate request")
-        print(f"Request headers: {dict(request.headers)}")
-        print(f"Request data: {request.get_json()}")
-        
-        # Your existing generation logic will go here
+        out = replicate.run(MODEL, input=payload)
+        if not out:
+            return jsonify({"success": False, "error": "Empty output from model"}), 502
+
+        ts = int(time.time())
+        count = len(list(GEN_DIR.glob("flux_output_test_*.webp"))) + 1
+        base = f"flux_output_test_{count:03d}_{ts}"
+        webp_path = GEN_DIR / f"{base}.webp"
+        png_path  = GEN_DIR / f"{base}.png"
+
+        first = out[0]
+        if isinstance(first, (bytes, bytearray)):
+            data = first
+        elif hasattr(first, "read"):
+            data = first.read()
+        elif isinstance(first, str) and first.startswith("http"):
+            r = requests.get(first, timeout=60)
+            r.raise_for_status()
+            data = r.content
+        else:
+            return jsonify({"success": False, "error": f"Unexpected output type: {type(first)}"}), 502
+
+        webp_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(webp_path, "wb") as f:
+            f.write(data)
+
+        # Save PNG version for download
+        with Image.open(webp_path) as img:
+            img.save(png_path, "PNG")
+
+        # Return absolute URLs for frontend
+        image_path = url_for("get_image", filename=webp_path.name)
+        download_path = url_for("download_image", filename=webp_path.name)
+        base = request.url_root
+        image_url = urljoin(base, image_path.lstrip('/'))
+        download_url = urljoin(base, download_path.lstrip('/'))
+
         return jsonify({
             "success": True,
-            "message": "Generation endpoint",
-            "imageUrl": "placeholder_url",
-            "downloadUrl": "placeholder_url"
+            "imageUrl": image_url,
+            "downloadUrl": download_url,
+            "prompt": formatted_prompt,
+            "aspect_ratio": payload["aspect_ratio"],
         }), 200
     except Exception as e:
-        print(f"Error in generate endpoint: {str(e)}")
         return jsonify({
-            "success": False,
-            "error": str(e)
+            'success': False,
+            'error': str(e)
         }), 500
 
 @app.after_request
@@ -131,91 +190,6 @@ def download_image(filename):
     return send_from_directory(str(GEN_DIR), png_filename, as_attachment=True)
 
 
-# Main generation endpoint
-@app.route('/generate', methods=['POST'])
-def generate_tattoo():
-    if not os.getenv("REPLICATE_API_TOKEN"):
-      return jsonify({"success": False, "error": "Missing REPLICATE_API_TOKEN"}), 500
-    
-    data = request.get_json(force=True) or {}
-    
-    # Extract data from the request
-    styles = data.get('styles', {})
-    print(f'STYLES: {styles}')
-    prompt = data.get('prompt', '')
-    size = data.get('size', 'M')
-    body_part = data.get('bodyPart', 'forearm')
-    advanced_options = data.get('parameters', {})
-    color = data.get("isColorEnabled", False)
-    
-    
-    # formatted_prompt = create_prompt(styles, prompt, size, body_part, advanced_options, color)
-    formatted_prompt = "Create a tattoo design that combines the following styles and criteria:\n" + str(data)
-    print(f'Formatted Prompt: {formatted_prompt}')
-    
-    payload = {
-        "prompt": formatted_prompt,
-        "aspect_ratio": bodypart_to_ratio(body_part),
-        "megapixels": '1',
-        "num_inference_steps": 4,
-        "num_outputs": 1,
-        "seed": 1121,
-        "go_fast": False,   
-        "output_format": "webp",     
-        "output_quality": 90,
-        # "disable_safety_checker": False,  # optional
-    }
-    
-    
-    
-    try:
-        out = replicate.run(MODEL, input=payload)
-        if not out:
-            return jsonify({"success": False, "error": "Empty output from model"}), 502
-          
-        ts = int(time.time())
-        count = len(list(GEN_DIR.glob("flux_output_test_*.webp"))) + 1
-        base = f"flux_output_test_{count:03d}_{ts}"
-        webp_path = GEN_DIR / f"{base}.webp"
-        png_path  = GEN_DIR / f"{base}.png"
-    
-        
-        first = out[0]
-        if isinstance(first, (bytes, bytearray)):
-            data = first
-        elif hasattr(first, "read"):
-            data = first.read()
-        elif isinstance(first, str) and first.startswith("http"):
-            r = requests.get(first, timeout=60)
-            r.raise_for_status()
-            data = r.content
-        else:
-            return jsonify({"success": False, "error": f"Unexpected output type: {type(first)}"}), 502
-            
-        webp_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(webp_path, "wb") as f:
-            f.write(data)
-
-        # Save PNG version for download
-        with Image.open(webp_path) as img:
-            img.save(png_path, "PNG")
-
-        # Build relative URLs so the React dev proxy forwards to Flask
-        image_url = url_for("get_image", filename=webp_path.name) 
-        download_url = url_for("download_image", filename=webp_path.name)  
-
-        return jsonify({
-            "success": True,
-            "imageUrl": image_url,
-            "downloadUrl": download_url,
-            "prompt": formatted_prompt,
-            "aspect_ratio": payload["aspect_ratio"],
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
 
 if __name__ == "__main__":
     try:
